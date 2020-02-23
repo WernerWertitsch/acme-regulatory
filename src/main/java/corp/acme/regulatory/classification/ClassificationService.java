@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 @Service
 public class ClassificationService {
 
-    public static final long WAIT_BEFORE_INITIALIZING = 1900;
+    // Did not really help with microservice stuff
+    public static final long WAIT_BEFORE_INITIALIZING = 300;
 
     Logger logger = Logger.getLogger("ClassifiactionService");
 
@@ -49,6 +50,18 @@ public class ClassificationService {
     Map<String, Classification> byName = new HashMap<>();
     List<Classification> alphabetical = new ArrayList<>();
 
+    public Classification byProductName(String name) {
+        return this.byName.get(name);
+    }
+
+    public Classification byId(String id) {
+        return this.byId.get(id);
+    }
+
+    public List<Classification> all() {
+        return this.alphabetical;
+    }
+
 
     @PostConstruct
     private void init() throws IOException {
@@ -62,23 +75,12 @@ public class ClassificationService {
     }
 
 
-    public Classification byProductName(String name) {
-        return this.byName.get(name);
-    }
-
-    public Classification byId(String id) {
-        return this.byId.get(id);
-    }
-
-    public List<Classification> all() {
-        return this.alphabetical;
-    }
-
+    /* From here stateful oldskool import */
     private void importFromFile() throws IOException {
         try {
             final Integer counter = new Integer(0);
             Arrays.asList(Util.asString(resourceFile).split("\r\n")).stream().map(l ->
-                l.split("=")
+                l.split(";")
             ).collect(Collectors.toList()).forEach(pair -> {
                 Classification classification = new Classification();
                 classification.setId(Util.createUUID());
@@ -103,7 +105,7 @@ public class ClassificationService {
         return this.categoryService.getByName(name);
 
         /** This was planned to work as a microservice "self" call, but it failed, sometimes it found the service
-         *  sometimes not..
+         *  sometimes not, and connection to service call was always refused
          *
             this.discoveryClient.getServices().forEach(s -> logger.info(String.format("Found Service %s", s)));
             URI uri = this.discoveryClient.getInstances("REGULATORY").get(0).getUri();
