@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class BySubstanceNames implements Function<List<String>, List<Classification>> {
     @Autowired
@@ -13,6 +14,7 @@ public class BySubstanceNames implements Function<List<String>, List<Classificat
 
     @Override
     public List<Classification> apply(List<String> names) {
-        return this.classificationService.bySubstanceNames(names);
+        return names.stream().map(n ->
+                this.classificationService.bySubstanceName(n)).collect(Collectors.toList());
     }
 }
