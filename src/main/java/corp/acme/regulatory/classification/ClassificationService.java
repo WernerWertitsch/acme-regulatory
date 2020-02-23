@@ -3,25 +3,14 @@ package corp.acme.regulatory.classification;
 import corp.acme.common.domain.Category;
 import corp.acme.common.domain.Classification;
 import corp.acme.common.domain.Util;
-import corp.acme.common.util.ServiceCall;
 import corp.acme.regulatory.category.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UncheckedIOException;
-import java.net.URI;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -50,8 +39,12 @@ public class ClassificationService {
     Map<String, Classification> byName = new HashMap<>();
     List<Classification> alphabetical = new ArrayList<>();
 
-    public Classification byProductName(String name) {
+    public Classification bySubstanceName(String name) {
         return this.byName.get(name);
+    }
+
+    public List<Classification> bySubstanceNames(List<String> names) {
+        return names.stream().map(n -> bySubstanceName(n)).collect(Collectors.toList());
     }
 
     public Classification byId(String id) {

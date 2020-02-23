@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.function.Function;
 
-public class ByProductName implements Function<String, Classification> {
+public class BySubstanceName implements Function<String, Classification> {
     @Autowired
     ClassificationService classificationService;
 
     @Override
     public Classification apply(String name) {
-        return this.classificationService.byProductName(name);
+        return this.classificationService.bySubstanceName(name);
     }
 }
